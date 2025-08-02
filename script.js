@@ -15,9 +15,9 @@ let attemptsLeft = 5;
 let currentLevel = 1;
 
 const levels = {
-  1: { gridSize: 4, numberOfEmojis: 1 },
-  2: { gridSize: 6, numberOfEmojis: 1 },
-  3: { gridSize: 8, numberOfEmojis: 1}
+  1: { gridSize: 4, numberOfEmojis: 5 },
+  2: { gridSize: 6, numberOfEmojis: 5 },
+  3: { gridSize: 8, numberOfEmojis: 5}
 };
 
 // 1. Create the grid
