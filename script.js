@@ -17,7 +17,7 @@ let currentLevel = 1;
 const levels = {
   1: { gridSize: 4, numberOfEmojis: 5 },
   2: { gridSize: 6, numberOfEmojis: 5 },
-  3: { gridSize: 8, numberOfEmojis: 5}
+  3: { gridSize: 8, numberOfEmojis: 5 }
 };
 
 // 1. Create the grid
@@ -138,7 +138,12 @@ function evaluateAttempt() {
   const selectedCorrectly = correct === numberOfEmojis;
   const exactMatch = selectedCells.size === emojiPositions.size;
 
-  resultText.textContent = `✅ You got ${correct} out of ${numberOfEmojis} correct! ❌ ${wrong} wrong selections. (${5 - attemptsLeft + 1}/5 tries)`;
+  let message = `✅ You got ${correct} out of ${numberOfEmojis} correct!`;
+  if (wrong > 0) {
+    message += ` ❌ ${wrong} wrong selections.`;
+  }
+  message += ` (${5 - attemptsLeft + 1}/5 tries)`;
+  resultText.textContent = message;
 
     if (selectedCorrectly && exactMatch && wrong === 0) {
     clearInterval(timerInterval);
