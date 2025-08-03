@@ -1,4 +1,5 @@
 const emoji = "🐺";
+const decoyEmoji = "🦝";
 
 const gameContainer = document.getElementById("game-grid");
 const submitBtn = document.getElementById("submit-btn");
@@ -6,6 +7,7 @@ const resultText = document.getElementById("result");
 const timerDisplay = document.getElementById("timer");
 const playAgainBtn = document.getElementById("retry-btn");
 
+let decoyPosition = null;
 let emojiPositions = new Set();
 let selectedCells = new Set();
 let timeLeft = 60;
@@ -38,12 +40,23 @@ function createGrid(gridSize) {
 function generateEmojiPositions() {
   const { numberOfEmojis } = levels[currentLevel];
   emojiPositions.clear();
+  decoyPosition = null;
 
   while (emojiPositions.size < numberOfEmojis) {
     const rand = Math.floor(Math.random() * totalCells);
     emojiPositions.add(rand);
   }
+
+  // Add single decoy
+  while (true) {
+    const rand = Math.floor(Math.random() * totalCells);
+    if (!emojiPositions.has(rand)) {
+      decoyPosition = rand;
+      break;
+    }
+  }
 }
+
 
 
 // 3. Show emojis briefly
@@ -52,6 +65,8 @@ function showEmojis(gridSize) {
     const index = parseInt(cell.dataset.index);
     if (emojiPositions.has(index)) {
       cell.textContent = emoji;
+    } else if (index === decoyPosition) {
+      cell.textContent = decoyEmoji;
     }
   });
 
@@ -61,6 +76,8 @@ function showEmojis(gridSize) {
     startTimer();
   }, 2000);
 }
+
+
 
 // 4. Hide emojis
 function hideEmojis() {
@@ -125,46 +142,50 @@ submitBtn.addEventListener("click", () => {
 function evaluateAttempt() {
   let correct = 0;
   let wrong = 0;
+  let hitDecoy = false;
 
   selectedCells.forEach(index => {
-    if (emojiPositions.has(index)) {
+    if (index === decoyPosition) {
+      hitDecoy = true;
+    } else if (emojiPositions.has(index)) {
       correct++;
     } else {
       wrong++;
     }
   });
 
+  if (hitDecoy) {
+    clearInterval(timerInterval);
+    finalizeGame("💀 You clicked the wrong emoji! Game Over.");
+    return;
+  }
+
   const { numberOfEmojis } = levels[currentLevel];
   const selectedCorrectly = correct === numberOfEmojis;
   const exactMatch = selectedCells.size === emojiPositions.size;
 
-  let message = `✅ You got ${correct} out of ${numberOfEmojis} correct!`;
-  if (wrong > 0) {
-    message += ` ❌ ${wrong} wrong selections.`;
-  }
-  message += ` (${5 - attemptsLeft + 1}/5 tries)`;
-  resultText.textContent = message;
-
-    if (selectedCorrectly && exactMatch && wrong === 0) {
+  if (selectedCorrectly && exactMatch && wrong === 0) {
     clearInterval(timerInterval);
     if (currentLevel === 1) {
-        finalizeGame("🎯 Level 1 passed!");
-        setTimeout(() => {
+      finalizeGame("🎯 Level 1 passed!");
+      setTimeout(() => {
         currentLevel = 2;
         startGame();
-        }, 2500);
+      }, 2500);
     } else if (currentLevel === 2) {
-        finalizeGame("🎯 Level 2 passed!");
-        setTimeout(() => {
+      finalizeGame("🎯 Level 2 passed!");
+      setTimeout(() => {
         currentLevel = 3;
         startGame();
-        }, 2500);
+      }, 2500);
     } else {
-        finalizeGame("🏆 You win the game!");
+      finalizeGame("🏆 You win the game!");
     }
-    }
-
+  } else {
+    resultText.textContent = `✅ You got ${correct} out of ${numberOfEmojis} correct! ❌ ${wrong} wrong selections. (${5 - attemptsLeft + 1}/5 tries)`;
+  }
 }
+
 
 
 
@@ -189,7 +210,7 @@ function finalizeGame(messagePrefix) {
   });
 
   const { numberOfEmojis } = levels[currentLevel];
-  resultText.textContent += `\n${messagePrefix} Final score: ${finalCorrect}/${numberOfEmojis}`;
+  resultText.textContent += `\n${messagePrefix}`;
 
   if (currentLevel === 3 && finalCorrect === numberOfEmojis) {
     playAgainBtn.textContent = "🎉 Play Again";
@@ -223,4 +244,8 @@ playAgainBtn.addEventListener("click", () => {
 });
 
 // Start the first level
-startGame();
+document.getElementById("start-btn").addEventListener("click", () => {
+  document.getElementById("intro-modal").style.display = "none";
+  startGame();
+});
+
