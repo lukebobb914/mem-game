@@ -10,7 +10,6 @@
 
 <body>
     <h1>🐺 Memory Game</h1>
-
     <div id="intro-modal" class="modal">
         <div class="modal-content">
             <h2>🐺 Help Save HDQ</h2>
@@ -22,6 +21,9 @@
 
     <!-- empty div to insert grid using JS -->
     <div id="game-grid"></div>
+    <div id="end-gif" style="display: none;">
+        <img src="gameover.gif" alt="Game Over" class="end-gif-img">
+    </div>
     <button id="submit-btn">Submit</button>
     <button id="retry-btn" style="display: none;">▶️ Play Again</button>
     <p id="timer">Time left: 60s</p>

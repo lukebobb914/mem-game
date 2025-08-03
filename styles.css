@@ -111,3 +111,11 @@ button:disabled {
 #start-btn:hover {
   background-color: #000;
 }
+
+.end-gif-img {
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  object-fit: cover;  /* Maintains crop/fill feel */
+  border-radius: 12px;
+}

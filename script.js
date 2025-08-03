@@ -7,7 +7,7 @@ const resultText = document.getElementById("result");
 const timerDisplay = document.getElementById("timer");
 const playAgainBtn = document.getElementById("retry-btn");
 
-let decoyPosition = null;
+let decoyPositions = new Set();
 let emojiPositions = new Set();
 let selectedCells = new Set();
 let timeLeft = 60;
@@ -17,10 +17,11 @@ let attemptsLeft = 5;
 let currentLevel = 1;
 
 const levels = {
-  1: { gridSize: 4, numberOfEmojis: 5 },
-  2: { gridSize: 6, numberOfEmojis: 5 },
-  3: { gridSize: 8, numberOfEmojis: 5 }
+  1: { gridSize: 4, numberOfEmojis: 1, decoyCount: 1 },
+  2: { gridSize: 6, numberOfEmojis: 2, decoyCount: 2 },
+  3: { gridSize: 8, numberOfEmojis: 3, decoyCount: 3 }
 };
+
 
 // 1. Create the grid
 function createGrid(gridSize) {
@@ -38,24 +39,25 @@ function createGrid(gridSize) {
 
 // 2. Generate random emoji positions
 function generateEmojiPositions() {
-  const { numberOfEmojis } = levels[currentLevel];
+  const { numberOfEmojis, decoyCount } = levels[currentLevel];
   emojiPositions.clear();
-  decoyPosition = null;
+  decoyPositions.clear();
 
+  // Place wolf emojis
   while (emojiPositions.size < numberOfEmojis) {
     const rand = Math.floor(Math.random() * totalCells);
     emojiPositions.add(rand);
   }
 
-  // Add single decoy
-  while (true) {
+  // Place decoy emojis in unique, empty spots
+  while (decoyPositions.size < decoyCount) {
     const rand = Math.floor(Math.random() * totalCells);
-    if (!emojiPositions.has(rand)) {
-      decoyPosition = rand;
-      break;
+    if (!emojiPositions.has(rand) && !decoyPositions.has(rand)) {
+      decoyPositions.add(rand);
     }
   }
 }
+
 
 
 
@@ -65,7 +67,7 @@ function showEmojis(gridSize) {
     const index = parseInt(cell.dataset.index);
     if (emojiPositions.has(index)) {
       cell.textContent = emoji;
-    } else if (index === decoyPosition) {
+    } else if (decoyPositions.has(index)) {
       cell.textContent = decoyEmoji;
     }
   });
@@ -105,7 +107,7 @@ function enableSelection() {
 
 // 6. Timer countdown
 function startTimer() {
-  timeLeft = 60;
+  timeLeft = 30;
   attemptsLeft = 5;
   updateTimerDisplay();
 
@@ -145,7 +147,7 @@ function evaluateAttempt() {
   let hitDecoy = false;
 
   selectedCells.forEach(index => {
-    if (index === decoyPosition) {
+    if (decoyPositions.has(index)) {
       hitDecoy = true;
     } else if (emojiPositions.has(index)) {
       correct++;
@@ -193,15 +195,6 @@ function evaluateAttempt() {
 function finalizeGame(messagePrefix) {
   submitBtn.disabled = true;
 
-  document.querySelectorAll('.cell').forEach(cell => {
-    cell.style.pointerEvents = 'none';
-    const index = parseInt(cell.dataset.index);
-    if (emojiPositions.has(index)) {
-      cell.textContent = emoji;
-      cell.style.color = 'black';
-    }
-  });
-
   let finalCorrect = 0;
   selectedCells.forEach(index => {
     if (emojiPositions.has(index)) {
@@ -210,16 +203,39 @@ function finalizeGame(messagePrefix) {
   });
 
   const { numberOfEmojis } = levels[currentLevel];
+  const isWin = (
+    (currentLevel === 1 || currentLevel === 2) &&
+    finalCorrect === numberOfEmojis &&
+    attemptsLeft > 0 &&
+    timeLeft > 0
+  ) || (currentLevel === 3 && finalCorrect === numberOfEmojis);
+
+  // Show the GIF only if they LOST
+  if (!isWin) {
+    gameContainer.style.display = 'none';
+    document.getElementById("end-gif").style.display = 'block';
+  }
+
+  // Reveal correct emoji positions (for clarity)
+  document.querySelectorAll('.cell').forEach(cell => {
+    const index = parseInt(cell.dataset.index);
+    if (emojiPositions.has(index)) {
+      cell.textContent = emoji;
+      cell.style.color = 'black';
+    }
+  });
+
   resultText.textContent += `\n${messagePrefix}`;
 
-  if (currentLevel === 3 && finalCorrect === numberOfEmojis) {
+  if (isWin && currentLevel === 3) {
     playAgainBtn.textContent = "🎉 Play Again";
-    playAgainBtn.style.display = 'inline-block';
-  } else if (attemptsLeft === 0 || timeLeft <= 0) {
+  } else {
     playAgainBtn.textContent = "🔁 Try Again";
-    playAgainBtn.style.display = 'inline-block';
   }
+
+  playAgainBtn.style.display = 'inline-block';
 }
+
 
 // 10. Start game
 function startGame() {
@@ -229,6 +245,9 @@ function startGame() {
   playAgainBtn.style.display = 'none';
   clearInterval(timerInterval);
 
+  document.getElementById("end-gif").style.display = 'none';
+  gameContainer.style.display = 'grid';
+
   const { gridSize } = levels[currentLevel];
   totalCells = gridSize * gridSize;
 
@@ -236,6 +255,7 @@ function startGame() {
   generateEmojiPositions();
   showEmojis();
 }
+
 
 
 playAgainBtn.addEventListener("click", () => {
