@@ -245,9 +245,6 @@ function startGame() {
   playAgainBtn.style.display = 'none';
   clearInterval(timerInterval);
 
-  document.getElementById("end-gif").style.display = 'none';
-  gameContainer.style.display = 'grid';
-
   const { gridSize } = levels[currentLevel];
   totalCells = gridSize * gridSize;
 
@@ -255,7 +252,6 @@ function startGame() {
   generateEmojiPositions();
   showEmojis();
 }
-
 
 
 playAgainBtn.addEventListener("click", () => {

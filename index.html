@@ -22,12 +22,20 @@
     <!-- empty div to insert grid using JS -->
     <div id="game-grid"></div>
     <div id="end-gif" style="display: none;">
-        <img src="gameover.gif" alt="Game Over" class="end-gif-img">
+        <img src="gameover2.gif" alt="Game Over" class="end-gif-img">
     </div>
+    <div id="win-gif" style="display: none;">
+        <img src="win.gif" alt="You win!" class="end-gif-img">
+    </div>
+    
     <button id="submit-btn">Submit</button>
     <button id="retry-btn" style="display: none;">▶️ Play Again</button>
     <p id="timer">Time left: 60s</p>
     <p id="result"></p>
+    <!-- count down to next level -->
+    <div id="level-countdown-overlay" class="overlay hidden">
+    <div class="countdown-number" id="countdown-number">3</div>
+    </div>
 
 
     <script src="script.js"></script>
