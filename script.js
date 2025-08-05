@@ -8,9 +8,9 @@ const timerDisplay = document.getElementById("timer");
 const playAgainBtn = document.getElementById("retry-btn");
 
 let decoyPositions = new Set();
-let emojiPositions = new Set();
+let wolfPositions = new Set();
 let selectedCells = new Set();
-let timeLeft = 60;
+let timeLeft = 30;
 let timerInterval;
 let attemptsLeft = 5;
 
@@ -18,15 +18,19 @@ let currentLevel = 1;
 
 const levels = {
   1: { gridSize: 4, numberOfEmojis: 1, decoyCount: 1 },
-  2: { gridSize: 6, numberOfEmojis: 2, decoyCount: 2 },
-  3: { gridSize: 8, numberOfEmojis: 3, decoyCount: 3 }
+  2: { gridSize: 6, numberOfEmojis: 4, decoyCount: 2 },
+  3: { gridSize: 8, numberOfEmojis: 5, decoyCount: 3 }
 };
 
 
 // 1. Create the grid
+// given gridSize (#ofcols) will create grid using 
+
+//  - takes in #of rows/cols 
 function createGrid(gridSize) {
-  gameContainer.innerHTML = '';
-  gameContainer.style.gridTemplateColumns = `repeat(${gridSize}, 1fr)`;
+  gameContainer.innerHTML = '';   // clear any existing grid 
+  // use css property gridTemplateColumns to assign grid size 
+  gameContainer.style.gridTemplateColumns = `repeat(${gridSize}, 1fr)`;   
 
   for (let i = 0; i < gridSize * gridSize; i++) {
     const cell = document.createElement("div");
@@ -38,40 +42,45 @@ function createGrid(gridSize) {
 
 
 // 2. Generate random emoji positions
-function generateEmojiPositions() {
-  const { numberOfEmojis, decoyCount } = levels[currentLevel];
-  emojiPositions.clear();
+// randomly generates positions of wolves + decoy emojis and stores in wolfPositions and decoyPositions sets
+function generatewolfPositions() {
+  const { numberOfEmojis, decoyCount } = levels[currentLevel];    // extract the #of emojis and decoyCount from levels dict 
+  
+  // clear prev positions
+  wolfPositions.clear();
   decoyPositions.clear();
 
-  // Place wolf emojis
-  while (emojiPositions.size < numberOfEmojis) {
-    const rand = Math.floor(Math.random() * totalCells);
-    emojiPositions.add(rand);
+  // Create + store wolf positions in wolfPositions
+  while (wolfPositions.size < numberOfEmojis) {
+    const rand = Math.floor(Math.random() * totalCells);          // random # from 0-1 then times by tot cells 
+    wolfPositions.add(rand);                                      // add # to wolfPositions set 
   }
 
   // Place decoy emojis in unique, empty spots
   while (decoyPositions.size < decoyCount) {
     const rand = Math.floor(Math.random() * totalCells);
-    if (!emojiPositions.has(rand) && !decoyPositions.has(rand)) {
+    if (!wolfPositions.has(rand) && !decoyPositions.has(rand)) {  // checks if pos is already occupied by wolf or decoy 
       decoyPositions.add(rand);
     }
   }
 }
 
-
-
-
 // 3. Show emojis briefly
+// sets cell value to be correct emoji for cell that are in wolfPositions and decoyPositions
+// call hideEmojis callback function after 2 seconds
 function showEmojis(gridSize) {
   document.querySelectorAll('.cell').forEach(cell => {
     const index = parseInt(cell.dataset.index);
-    if (emojiPositions.has(index)) {
-      cell.textContent = emoji;
+
+    // assign correct emoji (wolf/decoy) to correct grid 
+    if (wolfPositions.has(index)) {
+      cell.textContent = emoji;       
     } else if (decoyPositions.has(index)) {
       cell.textContent = decoyEmoji;
     }
   });
 
+  // Delay before executing callback function -> hideEmojis()
   setTimeout(() => {
     hideEmojis();
     enableSelection();
@@ -81,7 +90,7 @@ function showEmojis(gridSize) {
 
 
 
-// 4. Hide emojis
+// 4. Make emojis transparent color 
 function hideEmojis() {
   document.querySelectorAll('.cell').forEach(cell => {
     cell.textContent = '•';
@@ -90,10 +99,16 @@ function hideEmojis() {
 }
 
 // 5. Allow player to select cells
+// allows player to select and unselect cells 
 function enableSelection() {
+
+  // loop thru each cell in grid 
   document.querySelectorAll('.cell').forEach(cell => {
+
+    // add event listener for click to each cell 
     cell.addEventListener('click', () => {
-      const index = parseInt(cell.dataset.index);
+      const index = parseInt(cell.dataset.index);       // get index of clicked cell 
+      // if cell prev selected => remove and vice versa 
       if (selectedCells.has(index)) {
         selectedCells.delete(index);
         cell.classList.remove("selected");
@@ -106,41 +121,43 @@ function enableSelection() {
 }
 
 // 6. Timer countdown
+// countdown timer for 30s if time exceeds will 
 function startTimer() {
-  timeLeft = 30;
-  attemptsLeft = 5;
   updateTimerDisplay();
 
-  timerInterval = setInterval(() => {
-    timeLeft--;
-    updateTimerDisplay();
+  timerInterval = setInterval(() => {   // built in fn to set up an action for every sec 
+    timeLeft--;                         // subtract 1 from timeLeft
+    updateTimerDisplay();               // call fn to update timer display  
 
     if (timeLeft <= 0) {
-      clearInterval(timerInterval);
+      clearInterval(timerInterval);     // built-in fn to stop repeating task started with setInterval
       finalizeGame("⏱ Time's up!");
     }
   }, 1000);
 }
 
+// Helper fn to update timer display based on current timeLeft var 
 function updateTimerDisplay() {
   timerDisplay.textContent = `Time left: ${timeLeft}s | Attempts left: ${attemptsLeft}`;
 }
 
 // 7. Submit manually
-submitBtn.addEventListener("click", () => {
+submitBtn.addEventListener("click", () => {       // add click event listener for submit-button 
   if (attemptsLeft > 0) {
-    evaluateAttempt();
-    attemptsLeft--;
-    updateTimerDisplay();
+    evaluateAttempt();          // call evaluateAttempt()
+    attemptsLeft--;             // subtract 1 from attemptsLeft
+    updateTimerDisplay();       // update timer display (also displays attempts left)
 
+    // checks if user runs out of attempts 
     if (attemptsLeft === 0) {
       clearInterval(timerInterval);
-      finalizeGame("🎮 No attempts left!");
+      finalizeGame("🎮 No attempts left!");   // call finalizeGame 
     }
   }
 });
 
 // 8. Evaluate player selection
+// checks #of wolves correctly selected, check if decoys were hit, 
 function evaluateAttempt() {
   let correct = 0;
   let wrong = 0;
@@ -149,7 +166,7 @@ function evaluateAttempt() {
   selectedCells.forEach(index => {
     if (decoyPositions.has(index)) {
       hitDecoy = true;
-    } else if (emojiPositions.has(index)) {
+    } else if (wolfPositions.has(index)) {
       correct++;
     } else {
       wrong++;
@@ -164,7 +181,7 @@ function evaluateAttempt() {
 
   const { numberOfEmojis } = levels[currentLevel];
   const selectedCorrectly = correct === numberOfEmojis;
-  const exactMatch = selectedCells.size === emojiPositions.size;
+  const exactMatch = selectedCells.size === wolfPositions.size;
 
   if (selectedCorrectly && exactMatch && wrong === 0) {
     clearInterval(timerInterval);
@@ -197,7 +214,7 @@ function finalizeGame(messagePrefix) {
 
   let finalCorrect = 0;
   selectedCells.forEach(index => {
-    if (emojiPositions.has(index)) {
+    if (wolfPositions.has(index)) {
       finalCorrect++;
     }
   });
@@ -219,7 +236,7 @@ function finalizeGame(messagePrefix) {
   // Reveal correct emoji positions (for clarity)
   document.querySelectorAll('.cell').forEach(cell => {
     const index = parseInt(cell.dataset.index);
-    if (emojiPositions.has(index)) {
+    if (wolfPositions.has(index)) {
       cell.textContent = emoji;
       cell.style.color = 'black';
     }
@@ -249,7 +266,7 @@ function startGame() {
   totalCells = gridSize * gridSize;
 
   createGrid(gridSize);
-  generateEmojiPositions();
+  generatewolfPositions();
   showEmojis();
 }
 
