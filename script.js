@@ -5,6 +5,7 @@
 // ################################
 // Define Vars
 // ################################
+
 const emoji = "🐺";
 const decoyEmoji = "🦝";
 
@@ -24,11 +25,19 @@ let attemptsLeft = 3;
 
 let currentLevel = 1;
 
+// const levels = {
+//   1: { gridSize: 4, numberOfEmojis: 1, decoyCount: 1 },
+// };
+
 const levels = {
   1: { gridSize: 4, numberOfEmojis: 1, decoyCount: 1 },
-  2: { gridSize: 6, numberOfEmojis: 8, decoyCount: 2 },
-  3: { gridSize: 8, numberOfEmojis: 12, decoyCount: 8 }
+  2: { gridSize: 4, numberOfEmojis: 4, decoyCount: 2 },
+  3: { gridSize: 6, numberOfEmojis: 6, decoyCount: 3 },
+  4: { gridSize: 8, numberOfEmojis: 8, decoyCount: 4 }
 };
+
+const levelNumbers = Object.keys(levels).map(Number);     // extract levels as numbers 
+const maxLevel = Math.max(...levelNumbers);               // get max level 
 
 
 // 1. Create the grid
@@ -178,7 +187,7 @@ function evaluateAttempt() {
       // exit game if decoy index is in decoyPositions 
       clearInterval(timerInterval);
       // ! add some description...bandit trips HDQ and wolves catch up to HDQ
-      finalizeGame("🦝🦝🦝🦝🦝.");
+      finalizeGame("🦝 successfully distracted HDQ and the rest is history...");
       return;
 
       // add 1 to correct 
@@ -196,39 +205,26 @@ function evaluateAttempt() {
   const selectedCorrectly = correct === numberOfEmojis;         // bool to see if #of correct same as tot #of wolfPositions => eval to True or False
   const exactMatch = selectedCells.size === wolfPositions.size; // bool if # of cells selected == #of wolfPositions 
 
-  // User gets correct 
   if (selectedCorrectly && exactMatch && wrong === 0) {
     // stops the timerInterval repeating action (count down)
     clearInterval(timerInterval);
 
-    // for passing level 1
-    if (currentLevel === 1) {
-      finalizeGame("🎯 Level 1 passed!");
-
-      // wait 3s
+    if (currentLevel < maxLevel) {
+      finalizeGame(`🎯 Level ${currentLevel} passed!`);
       setTimeout(() => {
-        currentLevel = 2;
-        // startGame();
-        showLevelCountdown(startGame);
-      }, 1000);
-
-    // passing level 2
-    } else if (currentLevel === 2) {
-      finalizeGame("🎯 Level 2 passed!");
-      setTimeout(() => {
-        currentLevel = 3;
-        // startGame();
+        currentLevel++;
         showLevelCountdown(startGame);
       }, 1000);
     } else {
-      finalizeGame("🏆 You saved HDQ from the wolves!");
+      finalizeGame("🏆 You successfully helped HDQ befriend the alpha wolve!");
     }
 
   // if not correct 
-  } else if (gameRunning) {
+  } else {
     resultText.innerHTML = `✅ ${correct} out of ${numberOfEmojis} wolves <br>❌ ${wrong} wrong. (${startingAttempts - attemptsLeft + 1}/${startingAttempts} tries)`;
   }
 }
+
 
 
 
@@ -271,14 +267,25 @@ function finalizeGame(messagePrefix) {
   if (!isWin) {
     gameContainer.style.display = 'none';
     document.getElementById("end-gif").style.display = 'block';
+    playAgainBtn.textContent = "🔁 Play Again";       // add text content to playAgainBtn
+    playAgainBtn.style.display = 'inline-block';      // makes playAgainBtn 
   }
 
   resultText.textContent += `\n${messagePrefix}`;
 
-  if (!isWin) {
-    playAgainBtn.textContent = "🔁 Play Again";       // add text content to playAgainBtn
-    playAgainBtn.style.display = 'inline-block';      // makes playAgainBtn 
+ // win on last level 
+ if (isWin && currentLevel == maxLevel ) {
+    // win gif
+    gameContainer.style.display = 'none';
+    document.getElementById("win-gif").style.display = 'block';
+    // Show confetti!
+    confetti({
+      particleCount: 200,
+      spread: 70,
+      origin: { y: 0.6 }
+    });
   }
+
 }
 
 
@@ -295,7 +302,6 @@ playAgainBtn.addEventListener("click", () => {
 
 // 10. Start game (runs each level)
 function startGame() {
-  gameRunning = true;
   selectedCells.clear();                        // clears prev selected cells
   resultText.textContent = '';                  // clears prev msgs 
   submitBtn.disabled = false;                   // re-enables submit btn 
@@ -331,7 +337,7 @@ function showLevelCountdown(callback) {
   const overlay = document.getElementById("level-countdown-overlay");
   const countdownNumber = document.getElementById("countdown-number");
 
-  let count = 3;
+  let count = 1;
   countdownNumber.textContent = count;
   overlay.classList.remove("hidden");
 
