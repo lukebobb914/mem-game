@@ -1,3 +1,8 @@
+// TODO:
+// - add count down to start each time call startgame() 
+// - make timer more pleasing (graphical)
+// - add more context to messages
+
 // ################################
 // Define Vars
 // ################################
@@ -204,16 +209,18 @@ function evaluateAttempt() {
       // wait 3s
       setTimeout(() => {
         currentLevel = 2;
-        startGame();
-      }, 3000);
+        // startGame();
+        showLevelCountdown(startGame);
+      }, 1000);
 
     // passing level 2
     } else if (currentLevel === 2) {
       finalizeGame("🎯 Level 2 passed!");
       setTimeout(() => {
         currentLevel = 3;
-        startGame();
-      }, 3000);
+        // startGame();
+        showLevelCountdown(startGame);
+      }, 1000);
     } else {
       finalizeGame("🏆 You saved HDQ from the wolves!");
     }
@@ -277,10 +284,15 @@ function finalizeGame(messagePrefix) {
 
 
 // define event listener + action for play again button
+// playAgainBtn.addEventListener("click", () => {
+//   currentLevel = 1;
+//   startGame();
+// });
 playAgainBtn.addEventListener("click", () => {
   currentLevel = 1;
-  startGame();
+  showLevelCountdown(startGame);
 });
+
 
 // 10. Start game (runs each level)
 function startGame() {
@@ -304,8 +316,34 @@ function startGame() {
 }
 
 // Add event listener to start game (the let's begin btn)
+// document.getElementById("start-btn").addEventListener("click", () => {
+//   document.getElementById("intro-modal").style.display = "none";
+//   startGame();
+// });
+
 document.getElementById("start-btn").addEventListener("click", () => {
   document.getElementById("intro-modal").style.display = "none";
-  startGame();
+  showLevelCountdown(startGame);
 });
 
+
+
+function showLevelCountdown(callback) {
+  const overlay = document.getElementById("level-countdown-overlay");
+  const countdownNumber = document.getElementById("countdown-number");
+
+  let count = 3;
+  countdownNumber.textContent = count;
+  overlay.classList.remove("hidden");
+
+  const countdownInterval = setInterval(() => {
+    count--;
+    if (count <= 0) {
+      clearInterval(countdownInterval);
+      overlay.classList.add("hidden");
+      callback(); // Call the startGame function
+    } else {
+      countdownNumber.textContent = count;
+    }
+  }, 1000);
+}
