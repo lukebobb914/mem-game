@@ -1,5 +1,4 @@
 // TODO:
-// - add count down to start each time call startgame() 
 // - make timer more pleasing (graphical)
 // - add more context to messages
 
@@ -27,8 +26,8 @@ let currentLevel = 1;
 
 const levels = {
   1: { gridSize: 4, numberOfEmojis: 1, decoyCount: 1 },
-  2: { gridSize: 6, numberOfEmojis: 4, decoyCount: 2 },
-  3: { gridSize: 8, numberOfEmojis: 5, decoyCount: 3 }
+  2: { gridSize: 6, numberOfEmojis: 8, decoyCount: 2 },
+  3: { gridSize: 8, numberOfEmojis: 12, decoyCount: 8 }
 };
 
 
