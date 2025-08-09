@@ -150,3 +150,37 @@ button:disabled {
   100% { transform: scale(1); opacity: 1; }
 }
 
+#distraction {
+  position: absolute;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  z-index: 10;
+  pointer-events: none;
+  animation: bounceAround 2s linear infinite;
+}
+
+@keyframes bounceAround {
+  0% {
+    top: 10%;
+    left: 0%;
+  }
+  25% {
+    top: 30%;
+    left: 80%;
+  }
+  50% {
+    top: 50%;
+    left: 10%;
+  }
+  75% {
+    top: 30%;
+    left: 90%;
+  }
+  100% {
+    top: 10%;
+    left: 0%;
+  }
+}
+
+

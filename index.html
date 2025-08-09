@@ -22,6 +22,9 @@
 
     <!-- empty div to insert grid using JS -->
     <div id="game-grid"></div>
+    <img id="distraction" src="distraction.jpg" alt="distraction">
+
+    <!-- end gifs -->
     <div id="end-gif" style="display: none;">
         <img src="lose.gif" alt="Game Over" class="end-gif-img">
     </div>
@@ -29,10 +32,14 @@
         <img src="win.gif" alt="You win!" class="end-gif-img">
     </div>
     
+    <!-- buttons -->
     <button id="submit-btn">Submit</button>
     <button id="retry-btn" style="display: none;">▶️ Play Again</button>
+
+
     <p id="timer">Time left: 30s</p>
     <p id="result"></p>
+
     <!-- count down to next level -->
     <div id="level-countdown-overlay" class="overlay hidden">
     <div class="countdown-number" id="countdown-number">3</div>

@@ -100,12 +100,16 @@ function showEmojis(gridSize) {
     }
   });
 
+  // enable distraction
+  document.getElementById("distraction").style.display = 'block';
+
+
   // Delay before executing callback function -> hideEmojis()
   setTimeout(() => {
     hideEmojis();
     enableSelection();
     startTimer();
-  }, 2000);
+  }, 6000);
 }
 
 
@@ -116,6 +120,10 @@ function hideEmojis() {
     cell.textContent = '•';
     cell.style.color = 'transparent';
   });
+
+  // hide distraction
+  document.getElementById("distraction").style.display = 'none';
+
 }
 
 // 5. Allow player to select cells
