@@ -3,6 +3,7 @@
 // - add more context to messages
 // - add progress bar 
 // - make death gif more portrait 
+// - add hearts
 
 // ################################
 // Define Vars
@@ -171,7 +172,7 @@ submitBtn.addEventListener("click", () => {       // add click event listener fo
     // checks if user runs out of attempts 
     if (attemptsLeft === 0) {
       clearInterval(timerInterval);
-      finalizeGame("🎮 No attempts left!");   // call finalizeGame 
+      finalizeGame('');   // call finalizeGame 
     }
   }
 });
@@ -189,7 +190,7 @@ function evaluateAttempt() {
       // exit game if decoy index is in decoyPositions 
       clearInterval(timerInterval);
       // ! add some description...bandit trips HDQ and wolves catch up to HDQ
-      finalizeGame("🦝 successfully distracted HDQ and the rest is history...");
+      finalizeGame("🦝🦝🦝 successfully distracted HDQ and the rest is history...");
       return;
 
       // add 1 to correct 
@@ -273,7 +274,8 @@ function finalizeGame(messagePrefix) {
     playAgainBtn.style.display = 'inline-block';      // makes playAgainBtn 
   }
 
-  resultText.textContent += `\n${messagePrefix}`;
+  resultText.innerHTML += `<br><br>${messagePrefix}`;
+
 
  // win on last level 
  if (isWin && currentLevel == maxLevel ) {
