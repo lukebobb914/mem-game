@@ -1,6 +1,8 @@
 // TODO:
 // - make timer more pleasing (graphical)
 // - add more context to messages
+// - add progress bar 
+// - make death gif more portrait 
 
 // ################################
 // Define Vars
