@@ -28,16 +28,16 @@ let attemptsLeft = 3;
 
 let currentLevel = 1;
 
-const levels = {
-  1: { gridSize: 4, numberOfEmojis: 1, decoyCount: 1 },
-};
-
 // const levels = {
 //   1: { gridSize: 4, numberOfEmojis: 1, decoyCount: 1 },
-//   2: { gridSize: 4, numberOfEmojis: 4, decoyCount: 2 },
-//   3: { gridSize: 6, numberOfEmojis: 6, decoyCount: 3 },
-//   4: { gridSize: 8, numberOfEmojis: 8, decoyCount: 4 }
 // };
+
+const levels = {
+  1: { gridSize: 4, numberOfEmojis: 1, decoyCount: 1 },
+  2: { gridSize: 4, numberOfEmojis: 4, decoyCount: 2 },
+  3: { gridSize: 6, numberOfEmojis: 6, decoyCount: 3 },
+  4: { gridSize: 8, numberOfEmojis: 8, decoyCount: 4 }
+};
 
 const levelNumbers = Object.keys(levels).map(Number);     // extract levels as numbers 
 const maxLevel = Math.max(...levelNumbers);               // get max level 
@@ -109,7 +109,7 @@ function showEmojis(gridSize) {
     hideEmojis();
     enableSelection();
     startTimer();
-  }, 6000);
+  }, 3000);
 }
 
 
