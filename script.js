@@ -1,9 +1,9 @@
 // TODO:
+// - add spin to the distraction 
 // - make timer more pleasing (graphical)
+// - add hearts instead of tries 
 // - improve messages 
 // - add progress bar 
-// - add hearts instead of tries 
-// - fix bug where if selects all racoons it doesn't cause end gif to pop up 
 
 // ################################
 // Define Vars
