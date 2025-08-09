@@ -1,9 +1,9 @@
 // TODO:
 // - make timer more pleasing (graphical)
-// - add more context to messages
+// - improve messages 
 // - add progress bar 
-// - make death gif more portrait 
-// - add hearts
+// - add hearts instead of tries 
+// - fix bug where if selects all racoons it doesn't cause end gif to pop up 
 
 // ################################
 // Define Vars
@@ -88,7 +88,7 @@ function generatewolfPositions() {
 // 3. Show emojis briefly
 // sets cell value to be correct emoji for cell that are in wolfPositions and decoyPositions
 // call hideEmojis callback function after 2 seconds
-function showEmojis(gridSize) {
+function showEmojis() {
   document.querySelectorAll('.cell').forEach(cell => {
     const index = parseInt(cell.dataset.index);
 
@@ -199,7 +199,7 @@ function evaluateAttempt() {
       // exit game if decoy index is in decoyPositions 
       clearInterval(timerInterval);
       // ! add some description...bandit trips HDQ and wolves catch up to HDQ
-      finalizeGame("🦝🦝🦝 successfully distracted HDQ and the rest is history...");
+      finalizeGame("🦝🦝🦝 successfully distracted HDQ and the rest is history...", forceloss=true);
       return;
 
       // add 1 to correct 
@@ -242,7 +242,7 @@ function evaluateAttempt() {
 
 
 // 9. End game logic
-function finalizeGame(messagePrefix) {  
+function finalizeGame(messagePrefix, forceloss=false) {  
   submitBtn.disabled = true;              // submit button cannot be clicked 
 
   let finalCorrect = 0;
@@ -252,6 +252,8 @@ function finalizeGame(messagePrefix) {
       finalCorrect++;
     }
   });
+
+  
 
   const { numberOfEmojis } = levels[currentLevel];       // access tot #of wolves for this lvl
 
@@ -275,8 +277,8 @@ function finalizeGame(messagePrefix) {
   //   }
   // });
 
-  // Show the GIF only if they LOST
-  if (!isWin) {
+  // Show the GIF if lost or hit decoy
+  if (!isWin || forceloss) {
     gameContainer.style.display = 'none';
     document.getElementById("end-gif").style.display = 'block';
     playAgainBtn.textContent = "🔁 Play Again";       // add text content to playAgainBtn
