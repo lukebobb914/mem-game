@@ -11,7 +11,6 @@
 
 const emoji = "🐺";
 const decoyEmoji = "🦝";
-
 const gameContainer = document.getElementById("game-grid");
 const submitBtn = document.getElementById("submit-btn");
 const resultText = document.getElementById("result");
@@ -41,6 +40,7 @@ const levels = {
 
 const levelNumbers = Object.keys(levels).map(Number);     // extract levels as numbers 
 const maxLevel = Math.max(...levelNumbers);               // get max level 
+document.getElementById("distraction").style.display = 'none';    // remove distraction before starting
 
 
 // 1. Create the grid
@@ -100,9 +100,10 @@ function showEmojis(gridSize) {
     }
   });
 
-  // enable distraction
-  document.getElementById("distraction").style.display = 'block';
-
+  if (currentLevel != 1) {
+      // enable distraction
+      document.getElementById("distraction").style.display = 'block';
+  }
 
   // Delay before executing callback function -> hideEmojis()
   setTimeout(() => {
@@ -321,6 +322,7 @@ function startGame() {
   attemptsLeft = 3                              // reset attempts each round
   timeLeft = 30                                 // reset time
   clearInterval(timerInterval);                 // stops timer
+
 
   const { gridSize } = levels[currentLevel];    // retrieves grid size for current lvl (will be always 1 due to playAgainBtn or 1st time loaded current level declared = 1)
   totalCells = gridSize * gridSize;             
