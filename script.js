@@ -1,9 +1,7 @@
 // TODO:
-// - add spin to the distraction 
 // - make timer more pleasing (graphical)
 // - add hearts instead of tries 
 // - improve messages 
-// - add progress bar 
 
 // ################################
 // Define Vars
@@ -34,8 +32,8 @@ let currentLevel = 1;
 const levels = {
   1: { gridSize: 4, numberOfEmojis: 1, decoyCount: 1 },
   2: { gridSize: 4, numberOfEmojis: 4, decoyCount: 2 },
-  3: { gridSize: 6, numberOfEmojis: 6, decoyCount: 3 },
-  4: { gridSize: 8, numberOfEmojis: 8, decoyCount: 4 }
+  3: { gridSize: 6, numberOfEmojis: 6, decoyCount: 2 },
+  4: { gridSize: 8, numberOfEmojis: 7, decoyCount: 2 }
 };
 
 const levelNumbers = Object.keys(levels).map(Number);     // extract levels as numbers 
