@@ -106,12 +106,12 @@ function showEmojis() {
   }
 
   // Delay before executing callback function -> hideEmojis()
-  if (currentLevel == 4) {
+  if (currentLevel == maxLevel) {
     setTimeout(() => {
       hideEmojis();
       enableSelection();
       startTimer();
-    }, 6000);
+    }, 4000);
   } else {
     setTimeout(() => {
       hideEmojis();
@@ -329,7 +329,11 @@ function startGame() {
   resultText.textContent = '';                  // clears prev msgs 
   submitBtn.disabled = false;                   // re-enables submit btn 
   playAgainBtn.style.display = 'none';          // hides play again btn 
-  attemptsLeft = 3                              // reset attempts each round
+  if (currentLevel == maxLevel) {               // reset attempts 
+    attemptsLeft = 5
+    } else {
+      attemptsLeft = 3
+    }
   timeLeft = 30                                 // reset time
   clearInterval(timerInterval);                 // stops timer
 
