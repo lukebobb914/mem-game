@@ -7,8 +7,10 @@
 // Define Vars
 // ################################
 
+
 const emoji = "🐺";
 const decoyEmoji = "🦝";
+
 const gameContainer = document.getElementById("game-grid");
 const submitBtn = document.getElementById("submit-btn");
 const resultText = document.getElementById("result");
@@ -104,11 +106,19 @@ function showEmojis() {
   }
 
   // Delay before executing callback function -> hideEmojis()
-  setTimeout(() => {
-    hideEmojis();
-    enableSelection();
-    startTimer();
-  }, 3000);
+  if (currentLevel == 4) {
+    setTimeout(() => {
+      hideEmojis();
+      enableSelection();
+      startTimer();
+    }, 6000);
+  } else {
+    setTimeout(() => {
+      hideEmojis();
+      enableSelection();
+      startTimer();
+    }, 3000);
+  }
 }
 
 
